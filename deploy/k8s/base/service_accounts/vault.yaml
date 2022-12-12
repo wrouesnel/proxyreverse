@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: vault
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: vault
+rules:
+  # Allows vault pods to label themselves with their current status:
+  #   - https://www.vaultproject.io/docs/configuration/service-registration/kubernetes
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "update", "patch"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: vault
+subjects:
+  - kind: ServiceAccount
+    name: vault
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: vault

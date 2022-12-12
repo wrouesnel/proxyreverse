@@ -1,0 +1,51 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+configurations:
+- transformers/cluster-role-binding.yaml
+
+crds:
+- crds/openshift-route.json
+- crds/openshift-deploymentconfig.json
+
+resources:
+- service_accounts/vault-auth.yaml
+- service_accounts/vault.yaml
+- service_accounts/vac.yaml
+- service.yaml
+- ingress.yaml
+- vault-statefulset.yaml
+
+secretGenerator:
+- name: vault-tls
+  files:
+  - certificates/vault_vault_minikube_default_libvirt.crt
+  - certificates/vault-0_vault_minikube_default_libvirt.crt
+  - certificates/vault-1_vault_minikube_default_libvirt.crt
+  - certificates/vault-2_vault_minikube_default_libvirt.crt
+  - certificates/vault-3_vault_minikube_default_libvirt.crt
+  - certificates/vault-4_vault_minikube_default_libvirt.crt
+  - certificates/vault-5_vault_minikube_default_libvirt.crt
+  - certificates/vault-6_vault_minikube_default_libvirt.crt
+  - certificates/vault_vault_minikube_default_libvirt.pem
+  - certificates/vault-0_vault_minikube_default_libvirt.pem
+  - certificates/vault-1_vault_minikube_default_libvirt.pem
+  - certificates/vault-2_vault_minikube_default_libvirt.pem
+  - certificates/vault-3_vault_minikube_default_libvirt.pem
+  - certificates/vault-4_vault_minikube_default_libvirt.pem
+  - certificates/vault-5_vault_minikube_default_libvirt.pem
+  - certificates/vault-6_vault_minikube_default_libvirt.pem
+
+- name: vault-ingress-tls
+  files:
+
+
+images:
+# Upstream Vault Image
+- name: vault
+  newName: vault
+  newTag: "1.12.1"
+# Vault Automation Client Image (for autounlocking)
+- name: vault-automation-client
+  newName: ghcr.io/wrouesnel/vault-automation-client
+  newTag: latest

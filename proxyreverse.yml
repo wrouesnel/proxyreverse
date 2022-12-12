@@ -1,0 +1,16 @@
+# global settings are inherited by topology elements
+global:
+  logging:
+    level: debug
+    format: console
+
+proxychains:
+  default:
+    - http://proxy1:3128
+    - http://proxy2:8080
+    - http://proxy3:9111
+
+sites:
+ - host: google.com:443
+   tls_noverify: true
+   proxychain: default

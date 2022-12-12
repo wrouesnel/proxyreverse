@@ -1,0 +1,9 @@
+.idea
+node_modules
+/proxyreverse
+/bin
+/.bin
+/.coverage
+/release
+/.cover.out
+/test-configs

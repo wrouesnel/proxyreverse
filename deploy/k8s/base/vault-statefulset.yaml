@@ -1,0 +1,193 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: vault
+spec:
+  serviceName: vault-cluster
+  replicas: 7
+  selector:
+    matchLabels:
+      app: vault
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: vault
+    spec:
+      serviceAccountName: vault
+      shareProcessNamespace: true
+      # Apply this in production to ensure your pods are scheduled on separate nodes
+      # affinity:
+      #   podAntiAffinity:
+      #     preferredDuringSchedulingIgnoredDuringExecution:
+      #       - podAffinityTerm:
+      #           labelSelector:
+      #             matchExpressions:
+      #               - key: app
+      #                 operator: In
+      #                 values:
+      #                   - vault
+      #           topologyKey: kubernetes.io/hostname
+      #         weight: 100
+      #       - podAffinityTerm:
+      #           labelSelector:
+      #             matchExpressions:
+      #               - key: app
+      #                 operator: In
+      #                 values:
+      #                   - vault
+      #           topologyKey: topology.kubernetes.io/zone
+      #         weight: 100
+      initContainers:
+        # Write vault config to file
+        - name: vault-config
+          image: vault-automation-client
+          args:
+            - read-env-var
+            - --print
+            - VAULT_CONFIG
+            - /vault/config/config.hcl
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            # Injecting configuration like this allows the POD_NAME and POD_NAMESPACE to be templated
+            - name: VAULT_CONFIG
+              value: |
+                listener "tcp" {
+                  address         = "0.0.0.0:8200"
+                  cluster_address = "0.0.0.0:8201"
+                  tls_key_file    = "/vault/tls/$(POD_NAME)_vault_minikube_default_libvirt.pem"
+                  tls_cert_file   = "/vault/tls/$(POD_NAME)_vault_minikube_default_libvirt.crt"
+                }
+
+                storage "raft" {
+                  path    = "/vault/storage"
+                  node_id = "$(POD_NAME)"
+                }
+
+                telemetry {
+                  disable_hostname = true
+                  prometheus_retention_time = "12h"
+                }
+
+                service_registration "kubernetes" {
+                  namespace = "$(POD_NAMESPACE)"
+                  pod_name  = "$(POD_NAME)"
+                }
+
+                api_addr      = "https://vault.vault.minikube.default.libvirt"
+                cluster_addr  = "https://$(POD_NAME).vault-cluster.$(POD_NAMESPACE).svc.cluster.local:8201"
+                disable_mlock = true
+                ui = true
+          volumeMounts:
+            - name: vault-config
+              mountPath: /vault/config
+      containers:
+        - name: vault
+          image: vault
+          readinessProbe:
+            # Ready if Vault is initialized, unsealed and active/standby
+            httpGet:
+              path: /v1/sys/health?standbyok=true
+              port: 8200
+              scheme: HTTPS
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          command:
+            - /usr/bin/dumb-init
+            - --
+            - vault
+            - server
+            - -config=/vault/config
+          ports:
+            - containerPort: 8200
+            - containerPort: 8201
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 256Mi
+            requests:
+              cpu: 0m
+              memory: 48Mi
+          volumeMounts:
+            - name: vault-config
+              mountPath: /vault/config
+            - name: storage
+              mountPath: /vault/storage
+            - name: tls
+              mountPath: /vault/tls
+
+        # VAC configuration for Vault-based unsealing, which provides the most
+        # secure experience. The unseal keys are stored in the cluster itself,
+        # as long as one instance is up auto-unsealing is possible: a full outage
+        # triggers requires a manual unseal of at least one node for the cluster
+        # to recover.
+        # Switch to K8S secret storage if you simply want automation.
+        - name: vac
+          image: vault-automation-client
+          args:
+            - "unsealer"
+            - "--key-source.name=vault"
+            - "--key-source.vault.vault-addr=https://vault"
+            - "--key-source.vault.auth-type=k8s"
+            - "--key-source.vault.auth-path=auth/kubernetes"
+#            - "--key-source.vault.auth-parameters="
+            - "--key-source.vault.secret-path=/kv/data/unseal-key"
+            - "--key-source.vault.secret-key=shard_1"
+            - "--tls-no-verify"
+            - "https://vault"
+            - "https://127.0.0.1:8200"
+          ports:
+            - containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: /-/live
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 3
+          readinessProbe:
+            httpGet:
+              path: /-/ready
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 3
+          startupProbe:
+            httpGet:
+              path: /-/started
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 3
+          resources:
+            limits:
+              cpu: 100m
+              memory: 256Mi
+            requests:
+              cpu: 0m
+              memory: 48Mi
+
+      volumes:
+        - name: tls
+          secret:
+            secretName: vault-tls
+            defaultMode: 0400
+        - name: vault-config
+          emptyDir: {}
+  volumeClaimTemplates:
+    - metadata:
+        name: storage
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        #persistentVolumeReclaimPolicy: Retain
+        volumeMode: Filesystem
+        resources:
+          requests:
+            storage: 1Gi

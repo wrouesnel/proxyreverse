@@ -1,0 +1,122 @@
+# This file defines all the Vault services we launch. As each instance must be able to standalone, each instance is
+# it's own service - they connect to a common stateful set.
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vault
+  labels:
+    app: vault
+spec:
+  publishNotReadyAddresses: false
+  selector:
+    app: vault
+    statefulset.kubernetes.io/pod-name: vault-0
+  ports:
+    - port: 8200
+      name: public-api
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vault-0
+  labels:
+    app: vault
+spec:
+  publishNotReadyAddresses: true
+  selector:
+    app: vault
+    statefulset.kubernetes.io/pod-name: vault-0
+  ports:
+    - port: 8200
+      name: public-api
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vault-1
+  labels:
+    app: vault
+spec:
+  publishNotReadyAddresses: true
+  selector:
+    app: vault
+    statefulset.kubernetes.io/pod-name: vault-1
+  ports:
+    - port: 8200
+      name: public-api
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vault-2
+  labels:
+    app: vault
+spec:
+  publishNotReadyAddresses: true
+  selector:
+    app: vault
+    statefulset.kubernetes.io/pod-name: vault-2
+  ports:
+    - port: 8200
+      name: public-api
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vault-3
+  labels:
+    app: vault
+spec:
+  publishNotReadyAddresses: true
+  selector:
+    app: vault
+    statefulset.kubernetes.io/pod-name: vault-3
+  ports:
+    - port: 8200
+      name: public-api
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vault-4
+  labels:
+    app: vault
+spec:
+  publishNotReadyAddresses: true
+  selector:
+    app: vault
+    statefulset.kubernetes.io/pod-name: vault-4
+  ports:
+    - port: 8200
+      name: public-api
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vault-5
+  labels:
+    app: vault
+spec:
+  publishNotReadyAddresses: true
+  selector:
+    app: vault
+    statefulset.kubernetes.io/pod-name: vault-5
+  ports:
+    - port: 8200
+      name: public-api
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vault-6
+  labels:
+    app: vault
+spec:
+  publishNotReadyAddresses: true
+  selector:
+    app: vault
+    statefulset.kubernetes.io/pod-name: vault-6
+  ports:
+    - port: 8200
+      name: public-api

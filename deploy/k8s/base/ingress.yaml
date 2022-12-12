@@ -1,0 +1,151 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: vault
+  labels:
+    nginx.ingress.kubernetes.io/backend-protocol: "https"
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+spec:
+  rules:
+  - host: vault.vault.minikube.default.libvirt
+    http:
+      paths:
+      - backend:
+          service:
+            name: vault
+            port:
+              number: 8200
+        pathType: ImplementationSpecific
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: vault-0
+  labels:
+    nginx.ingress.kubernetes.io/backend-protocol: "https"
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+spec:
+  rules:
+    - host: vault-0.vault.minikube.default.libvirt
+      http:
+        paths:
+          - backend:
+              service:
+                name: vault-0
+                port:
+                  number: 8200
+            pathType: ImplementationSpecific
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: vault-1
+  labels:
+    nginx.ingress.kubernetes.io/backend-protocol: "https"
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+spec:
+  rules:
+    - host: vault-1.vault.minikube.default.libvirt
+      http:
+        paths:
+          - backend:
+              service:
+                name: vault-1
+                port:
+                  number: 8200
+            pathType: ImplementationSpecific
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: vault-2
+  labels:
+    nginx.ingress.kubernetes.io/backend-protocol: "https"
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+spec:
+  rules:
+    - host: vault-2.vault.minikube.default.libvirt
+      http:
+        paths:
+          - backend:
+              service:
+                name: vault-2
+                port:
+                  number: 8200
+            pathType: ImplementationSpecific
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: vault-3
+  labels:
+    nginx.ingress.kubernetes.io/backend-protocol: "https"
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+spec:
+  rules:
+    - host: vault-3.vault.minikube.default.libvirt
+      http:
+        paths:
+          - backend:
+              service:
+                name: vault-3
+                port:
+                  number: 8200
+            pathType: ImplementationSpecific
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: vault-4
+  labels:
+    nginx.ingress.kubernetes.io/backend-protocol: "https"
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+spec:
+  rules:
+    - host: vault-4.vault.minikube.default.libvirt
+      http:
+        paths:
+          - backend:
+              service:
+                name: vault-4
+                port:
+                  number: 8200
+            pathType: ImplementationSpecific
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: vault-5
+  labels:
+    nginx.ingress.kubernetes.io/backend-protocol: "https"
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+spec:
+  rules:
+    - host: vault-5.vault.minikube.default.libvirt
+      http:
+        paths:
+          - backend:
+              service:
+                name: vault-5
+                port:
+                  number: 8200
+            pathType: ImplementationSpecific
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: vault-6
+  labels:
+    nginx.ingress.kubernetes.io/backend-protocol: "https"
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+spec:
+  rules:
+    - host: vault-6.vault.minikube.default.libvirt
+      http:
+        paths:
+          - backend:
+              service:
+                name: vault-6
+                port:
+                  number: 8200
+            pathType: ImplementationSpecific

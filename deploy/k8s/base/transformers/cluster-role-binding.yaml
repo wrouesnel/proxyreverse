@@ -1,0 +1,9 @@
+apiVersion: builtin
+kind: NamespaceTransformer
+metadata:
+  name: notImportantHere
+setRoleBindingSubjects: allServiceAccounts
+fieldSpecs:
+- path: metadata/name
+  kind: Namespace
+  create: true
