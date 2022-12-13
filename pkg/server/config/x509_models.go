@@ -3,12 +3,13 @@ package config
 import (
 	"crypto/sha256"
 	"crypto/x509"
+	"io/ioutil"
+	"os"
+
 	"github.com/pkg/errors"
 	"github.com/samber/lo"
 	"github.com/wrouesnel/proxyreverse/pkg/certutils"
 	"go.uber.org/zap"
-	"io/ioutil"
-	"os"
 )
 
 const (

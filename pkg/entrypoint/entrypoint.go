@@ -3,14 +3,15 @@ package entrypoint
 import (
 	"context"
 	"fmt"
-	"github.com/wrouesnel/proxyreverse/assets"
-	"github.com/wrouesnel/proxyreverse/pkg/server"
-	"github.com/wrouesnel/proxyreverse/pkg/server/config"
 	"io"
 	"io/ioutil"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/wrouesnel/proxyreverse/assets"
+	"github.com/wrouesnel/proxyreverse/pkg/server"
+	"github.com/wrouesnel/proxyreverse/pkg/server/config"
 
 	"github.com/alecthomas/kong"
 	"github.com/samber/lo"

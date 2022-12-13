@@ -2,12 +2,13 @@ package server
 
 import (
 	"context"
+	"net"
+	"net/http"
+
 	"github.com/MadAppGang/httplog"
 	lzap "github.com/MadAppGang/httplog/zap"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
-	"net"
-	"net/http"
 )
 
 type Listener interface {
@@ -27,17 +28,12 @@ func (l *HTTPEdgeListener) AddSite(host string, backend http.Handler) error {
 
 // handler implements HandlerFunc.
 func (l *HTTPEdgeListener) handler(w http.ResponseWriter, r *http.Request) {
-	host, _, err := net.SplitHostPort(r.Host)
-	if err != nil {
-		r.Body.Close()
-		w.WriteHeader(http.StatusBadGateway)
-		return
-	}
-	hostname := host
+	hostname, _, _ := net.SplitHostPort(r.Host)
 
 	backend, found := l.backends[hostname]
 	// Bad gateway
 	if !found {
+		l.logger.Debug("Host is not known", zap.String("hostname", hostname))
 		r.Body.Close()
 		w.WriteHeader(http.StatusBadGateway)
 		return
@@ -61,7 +57,7 @@ func NewHTTPEdgeListener(ctx context.Context, cfg listenerKey) (Listener, error)
 	}
 
 	handler := httplog.LoggerWithConfig(httplog.LoggerConfig{
-		Formatter: lzap.DefaultZapLogger(r.logger, zap.InfoLevel, ""),
+		Formatter: lzap.DefaultZapLogger(r.logger, zap.InfoLevel, "HTTP Request"),
 	}, http.HandlerFunc(r.handler))
 
 	r.server = &http.Server{

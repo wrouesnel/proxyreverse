@@ -79,7 +79,7 @@ type HostSpec struct {
 	Network string // Network type (default TCP)
 }
 
-// UnmarshalText implements the TextMarshaller interface for HostSpec
+// UnmarshalText implements the TextMarshaller interface for HostSpec.
 func (u *HostSpec) UnmarshalText(text []byte) error {
 	splitPort := strings.SplitN(string(text), "/", 2)
 	if len(splitPort) > 1 {
@@ -103,7 +103,7 @@ func (u *HostSpec) UnmarshalText(text []byte) error {
 	return nil
 }
 
-// MarshalText implements the TextMarshaller interface for HostSpec
+// MarshalText implements the TextMarshaller interface for HostSpec.
 func (u *HostSpec) MarshalText() ([]byte, error) {
 	return []byte(u.String()), nil
 }
@@ -121,7 +121,7 @@ type URL struct {
 	*url.URL
 }
 
-// NewURL initializes a new URL object
+// NewURL initializes a new URL object.
 func NewURL(url string) (URL, error) {
 	u := URL{nil}
 	err := u.UnmarshalText([]byte(url))

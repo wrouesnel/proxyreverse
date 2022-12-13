@@ -7,7 +7,7 @@ node_modules
 /release
 /.cover.out
 /test-configs
+/..bfg-report
 /.junit
 /image.iid
-/..bfg-report
 

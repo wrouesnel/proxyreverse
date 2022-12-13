@@ -2,12 +2,13 @@ package server
 
 import (
 	"crypto/tls"
-	"github.com/imroc/req/v3"
-	"github.com/wrouesnel/proxyreverse/pkg/server/config"
-	"go.uber.org/zap"
 	"io"
 	"net/http"
 	"net/url"
+
+	"github.com/imroc/req/v3"
+	"github.com/wrouesnel/proxyreverse/pkg/server/config"
+	"go.uber.org/zap"
 )
 
 type HTTPBackend struct {
@@ -52,7 +53,7 @@ func NewHTTPBackend(config config.BackendConfig, proxychain Proxychain) (*HTTPBa
 	return r, nil
 }
 
-// ServerHTTP implements http.Handler
+// ServerHTTP implements http.Handler.
 func (h HTTPBackend) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
 	// Receive the request, copy headers and make the outbound request.
 	outbound := h.client.NewRequest()

@@ -2,20 +2,21 @@ package server
 
 import (
 	"fmt"
+	"net/url"
+
 	"github.com/pkg/errors"
 	"github.com/samber/lo"
 	connect_proxy_scheme "github.com/wrouesnel/go.connect-proxy-scheme"
 	"github.com/wrouesnel/proxyreverse/pkg/server/config"
 	"go.uber.org/zap"
 	"golang.org/x/net/proxy"
-	"net/url"
 )
 
 var (
 	ErrDirectProxyAfterNonDirectProxy = errors.New("direct connection does not make sense as non-first member of proxychain")
 )
 
-// ErrInvalidProxySpec is the common type for proxy construction errors
+// ErrInvalidProxySpec is the common type for proxy construction errors.
 type ErrInvalidProxySpec struct {
 	cause error
 }
@@ -34,17 +35,17 @@ func init() {
 }
 
 // proxychain implements a dialer which chains successive proxies together in
-// order to reach a target addr
+// order to reach a target addr.
 type proxychain struct {
 	dialer proxy.ContextDialer
 }
 
-// Dialer implements Proxychain
+// Dialer implements Proxychain.
 func (pc *proxychain) Dialer() proxy.ContextDialer {
 	return pc.dialer
 }
 
-// Proxychain provides an interface to constructed chains of proxies
+// Proxychain provides an interface to constructed chains of proxies.
 type Proxychain interface {
 	Dialer() proxy.ContextDialer
 }

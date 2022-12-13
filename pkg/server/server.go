@@ -2,11 +2,12 @@ package server
 
 import (
 	"context"
+	"net/netip"
+
 	"github.com/pkg/errors"
 	"github.com/wrouesnel/proxyreverse/assets"
 	"github.com/wrouesnel/proxyreverse/pkg/server/config"
 	"go.uber.org/zap"
-	"net/netip"
 )
 
 type ServerCommand struct{}
@@ -22,13 +23,13 @@ var (
 	ErrAttachSiteToListenerFailed = errors.New("failed to attach site to listener")
 )
 
-// listenerKey implements the map key used for tracking listeners
+// listenerKey implements the map key used for tracking listeners.
 type listenerKey struct {
 	Addr    netip.AddrPort
 	Network string
 }
 
-// siteKey implements the map key used for tracking backends being mapped to listeners
+// siteKey implements the map key used for tracking backends being mapped to listeners.
 type siteKey struct {
 	Host     string
 	Listener string
