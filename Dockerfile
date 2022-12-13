@@ -14,19 +14,14 @@ RUN useradd -u 1001 app \
 
 FROM scratch
 
-COPY --from=build /build/pathfinderproxy /bin/pathfinderproxy
+COPY --from=build /build/proxyreverse /bin/proxyreverse
 COPY --from=build /etc/passwd /etc/passwd
 COPY --from=build /config /
 
 ENV PATH=/bin:$PATH
 
-ENTRYPOINT ["pathfinderproxy"]
-
-EXPOSE \
-    443/tcp
-    80/tcp
-    8443/tcp
-    53/udp
-    53/tcp
+ENTRYPOINT ["proxyreverse"]
 
 USER 1001
+
+CMD ["reverse-proxy"]
