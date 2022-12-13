@@ -31,6 +31,7 @@ type Options struct {
 	Version bool `help:"Print the version and exit"`
 
 	ReverseProxy server.ServerCommand `cmd:"" help:"Start proxyreverse server"`
+	DumpConfig   struct{}             `cmd:"" help:"Dump active configuration"`
 }
 
 type LaunchArgs struct {
@@ -118,16 +119,18 @@ func Entrypoint(args LaunchArgs) int {
 		return 1
 	}
 
-	//sanitizedCfg, err := config.LoadAndSanitizeConfig(configBytes)
-	//if err != nil {
-	//	logger.Error("Error loading config", zap.Error(err))
-	//	return 1
-	//}
+	sanitizedCfg, err := config.LoadAndSanitizeConfig(configBytes)
+	if err != nil {
+		logger.Error("Error loading config", zap.Error(err))
+		return 1
+	}
 
 	logger.Info("Starting command")
 	switch ctx.Command() {
-	case "server":
+	case "reverse-proxy":
 		err = server.Server(appCtx, options.Assets, options.ReverseProxy, cfg)
+	case "dump-config":
+		args.StdOut.Write([]byte(sanitizedCfg))
 	default:
 		logger.Error("Command not implemented")
 	}

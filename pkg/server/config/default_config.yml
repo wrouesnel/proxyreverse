@@ -1,10 +1,9 @@
-global:
-  dns:
-    cidrs:
-      - 224.0.0.0/8
+global: {}
+#  logging:
+#    level: debug
+#    format: console
 
-topology:
-  # an empty selectors list makes this lowest priority. Multiples can be lowest priority.
-  - selectors: []
-    # type direct means just forward to system resources
-    type: direct
+proxychains:
+  default: []
+
+sites: []

@@ -1,16 +1,32 @@
 # global settings are inherited by topology elements
-global:
-  logging:
-    level: debug
-    format: console
+global: {}
+#  logging:
+#    level: debug
+#    format: console
 
 proxychains:
   default:
-    - http://proxy1:3128
-    - http://proxy2:8080
-    - http://proxy3:9111
+    - proxy: http://192.168.16.10:3128
+
+listeners:
+  http:
+    listen_addr: 127.0.0.1:8080
+    listen_type: http-edge
 
 sites:
- - host: google.com:443
-   tls_noverify: true
+ - host: localhost
+   listener:
+   - http
+   backend:
+     target: google.com:443
+     http_headers:
+       set_headers:
+         Host:
+           - google.com
+     tls:
+      enable: true
+      sni_name: google.com
+      ca_certs:
+        - system
+
    proxychain: default

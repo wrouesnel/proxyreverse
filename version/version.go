@@ -4,6 +4,6 @@ package version
 //nolint:gochecknoglobals
 var Version = "development"
 
-const Name = "vault-cluster-automation"
-const EnvPrefix = "VAC"
-const Description = "Vault Cluster Automation"
+const Name = "proxyreverse"
+const EnvPrefix = "PROXYREVERSE"
+const Description = "Simple reverse proxy with proxy chaining support"
