@@ -1,6 +1,7 @@
 package server
 
 import (
+	"crypto/tls"
 	"github.com/imroc/req/v3"
 	"github.com/wrouesnel/proxyreverse/pkg/server/config"
 	"go.uber.org/zap"
@@ -21,8 +22,24 @@ type HTTPBackend struct {
 }
 
 func NewHTTPBackend(config config.BackendConfig, proxychain Proxychain) (*HTTPBackend, error) {
+	client := req.NewClient().
+		SetDial(proxychain.Dialer().DialContext)
+
+	sniName := config.Target.Host
+	if config.TLS.ServerNameIndication != nil {
+		sniName = *config.TLS.ServerNameIndication
+	}
+
+	if config.TLS.Enable {
+		client = client.SetTLSClientConfig(&tls.Config{
+			InsecureSkipVerify: config.TLS.NoVerify,
+			ServerName:         sniName,
+			RootCAs:            config.TLS.CACerts.CertPool,
+		})
+	}
+
 	r := &HTTPBackend{
-		client:     req.NewClient(),
+		client:     client,
 		proxychain: proxychain,
 
 		target:     config.Target.HostPort(),
@@ -30,7 +47,6 @@ func NewHTTPBackend(config config.BackendConfig, proxychain Proxychain) (*HTTPBa
 		setHeaders: config.HTTPHeaders.SetHeaders,
 		delHeaders: config.HTTPHeaders.DelHeaders,
 	}
-
 	r.logger = zap.L().With(zap.String("target", config.Target.String()))
 
 	return r, nil
