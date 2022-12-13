@@ -28,7 +28,10 @@ func (l *HTTPEdgeListener) AddSite(host string, backend http.Handler) error {
 
 // handler implements HandlerFunc.
 func (l *HTTPEdgeListener) handler(w http.ResponseWriter, r *http.Request) {
-	hostname, _, _ := net.SplitHostPort(r.Host)
+	hostname, _, err := net.SplitHostPort(r.Host)
+	if err != nil {
+		hostname = r.Host
+	}
 
 	backend, found := l.backends[hostname]
 	// Bad gateway
@@ -57,7 +60,7 @@ func NewHTTPEdgeListener(ctx context.Context, cfg listenerKey) (Listener, error)
 	}
 
 	handler := httplog.LoggerWithConfig(httplog.LoggerConfig{
-		Formatter: lzap.DefaultZapLogger(r.logger, zap.InfoLevel, "HTTP Request"),
+		Formatter: lzap.ZapLogger(r.logger, zap.InfoLevel, "HTTP Request"),
 	}, http.HandlerFunc(r.handler))
 
 	r.server = &http.Server{
