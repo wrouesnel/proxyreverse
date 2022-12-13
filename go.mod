@@ -3,6 +3,8 @@ module github.com/wrouesnel/proxyreverse
 go 1.18
 
 require (
+	github.com/MadAppGang/httplog v1.2.1
+	github.com/MadAppGang/httplog/zap v1.2.1
 	github.com/alecthomas/kong v0.7.1
 	github.com/imroc/req/v3 v3.26.4
 	github.com/integralist/go-findroot v0.0.0-20160518114804-ac90681525dc
@@ -19,8 +21,10 @@ require (
 )
 
 require (
+	github.com/TylerBrock/colorjson v0.0.0-20200706003622-8a50f05110d2 // indirect
 	github.com/cheekybits/genny v1.0.0 // indirect
 	github.com/dsnet/compress v0.0.1 // indirect
+	github.com/fatih/color v1.13.0 // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
@@ -32,6 +36,8 @@ require (
 	github.com/marten-seemann/qtls-go1-17 v0.1.2 // indirect
 	github.com/marten-seemann/qtls-go1-18 v0.1.2 // indirect
 	github.com/marten-seemann/qtls-go1-19 v0.1.0-beta.1 // indirect
+	github.com/mattn/go-colorable v0.1.13 // indirect
+	github.com/mattn/go-isatty v0.0.16 // indirect
 	github.com/nwaples/rardecode v1.1.3 // indirect
 	github.com/nxadm/tail v1.4.8 // indirect
 	github.com/onsi/ginkgo v1.16.5 // indirect

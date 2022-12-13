@@ -2,6 +2,8 @@ package server
 
 import (
 	"context"
+	"github.com/MadAppGang/httplog"
+	lzap "github.com/MadAppGang/httplog/zap"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
 	"net"
@@ -13,6 +15,7 @@ type Listener interface {
 }
 
 type HTTPEdgeListener struct {
+	logger   *zap.Logger
 	server   *http.Server
 	backends map[string]http.Handler
 }
@@ -45,10 +48,11 @@ func (l *HTTPEdgeListener) handler(w http.ResponseWriter, r *http.Request) {
 
 func NewHTTPEdgeListener(ctx context.Context, cfg listenerKey) (Listener, error) {
 	r := &HTTPEdgeListener{
+		logger:   zap.L().With(zap.String("addr", cfg.Addr.String()), zap.String("network", cfg.Network)),
 		backends: map[string]http.Handler{},
 	}
 
-	logger := zap.L().With(zap.String("addr", cfg.Addr.String()), zap.String("network", cfg.Network))
+	logger := r.logger
 
 	listener, err := net.Listen(cfg.Network, cfg.Addr.String())
 	if err != nil {
@@ -56,8 +60,12 @@ func NewHTTPEdgeListener(ctx context.Context, cfg listenerKey) (Listener, error)
 		return nil, errors.Wrapf(err, "failed to start listener: %v/%v", cfg.Addr.String(), cfg.Network)
 	}
 
+	handler := httplog.LoggerWithConfig(httplog.LoggerConfig{
+		Formatter: lzap.DefaultZapLogger(r.logger, zap.InfoLevel, ""),
+	}, http.HandlerFunc(r.handler))
+
 	r.server = &http.Server{
-		Handler: http.HandlerFunc(r.handler),
+		Handler: handler,
 	}
 
 	go func() {
