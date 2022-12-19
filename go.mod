@@ -13,7 +13,7 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/pkg/errors v0.9.1
 	github.com/rogpeppe/go-internal v1.9.0
-	github.com/samber/lo v1.36.0
+	github.com/samber/lo v1.37.0
 	github.com/wrouesnel/go.connect-proxy-scheme v0.0.0-20220926121750-2b62bcbfc923
 	go.uber.org/zap v1.24.0
 	golang.org/x/net v0.4.0
