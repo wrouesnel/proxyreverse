@@ -6,7 +6,7 @@ require (
 	github.com/MadAppGang/httplog v1.2.1
 	github.com/MadAppGang/httplog/zap v1.2.1
 	github.com/alecthomas/kong v0.7.1
-	github.com/imroc/req/v3 v3.26.4
+	github.com/imroc/req/v3 v3.26.5
 	github.com/integralist/go-findroot v0.0.0-20160518114804-ac90681525dc
 	github.com/magefile/mage v1.14.0
 	github.com/mholt/archiver v3.1.1+incompatible
