@@ -3,7 +3,7 @@ module github.com/wrouesnel/proxyreverse
 go 1.18
 
 require (
-	github.com/MadAppGang/httplog v1.2.1
+	github.com/MadAppGang/httplog v1.3.0
 	github.com/MadAppGang/httplog/zap v1.2.1
 	github.com/alecthomas/kong v0.7.1
 	github.com/imroc/req/v3 v3.26.4
@@ -37,7 +37,7 @@ require (
 	github.com/marten-seemann/qtls-go1-18 v0.1.2 // indirect
 	github.com/marten-seemann/qtls-go1-19 v0.1.0-beta.1 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
-	github.com/mattn/go-isatty v0.0.16 // indirect
+	github.com/mattn/go-isatty v0.0.17 // indirect
 	github.com/nwaples/rardecode v1.1.3 // indirect
 	github.com/nxadm/tail v1.4.8 // indirect
 	github.com/onsi/ginkgo v1.16.5 // indirect
@@ -49,7 +49,7 @@ require (
 	golang.org/x/crypto v0.1.0 // indirect
 	golang.org/x/exp v0.0.0-20221211140036-ad323defaf05 // indirect
 	golang.org/x/mod v0.6.0 // indirect
-	golang.org/x/sys v0.3.0 // indirect
+	golang.org/x/sys v0.5.0 // indirect
 	golang.org/x/text v0.5.0 // indirect
 	golang.org/x/tools v0.2.0 // indirect
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
