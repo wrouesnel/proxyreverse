@@ -2,10 +2,11 @@ package server
 
 import (
 	"context"
-	"github.com/samber/lo"
 	"net"
 	"net/http"
 	"strings"
+
+	"github.com/samber/lo"
 
 	"github.com/MadAppGang/httplog"
 	lzap "github.com/MadAppGang/httplog/zap"
@@ -19,7 +20,7 @@ type Listener interface {
 	AddSite(host string, backend http.Handler) error
 }
 
-// matcher encodes the trie structure used for resolving wildcard domains
+// matcher encodes the trie structure used for resolving wildcard domains.
 type matcher struct {
 	backend  http.Handler
 	subtrees map[string]*matcher

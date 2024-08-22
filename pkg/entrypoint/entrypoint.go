@@ -45,6 +45,7 @@ type LaunchArgs struct {
 
 // Entrypoint implements the actual functionality of the program so it can be called inline from testing.
 // env is normally passed the environment variable array.
+//
 //nolint:funlen,gocognit,gocyclo,cyclop,maintidx
 func Entrypoint(args LaunchArgs) int {
 	var err error

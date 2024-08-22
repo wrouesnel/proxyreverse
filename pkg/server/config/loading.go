@@ -15,6 +15,7 @@ var (
 )
 
 // Decoder returns the decoder for config maps.
+//
 //nolint:exhaustruct
 func Decoder(target interface{}, allowUnused bool) (*mapstructure.Decoder, error) {
 	decoder, err := mapstructure.NewDecoder(&mapstructure.DecoderConfig{
