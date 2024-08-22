@@ -17,6 +17,9 @@ sites:
  - host: localhost
    listener:
    - http
+#   paths:
+#     "/*/":
+#     "/some/path/*/":
    backend:
      target: google.com:443
      http_headers:

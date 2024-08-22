@@ -16,12 +16,12 @@ const (
 	SiteConfigTypeHTTPEdge ListenerType = "http-edge"
 )
 
-//type SiteType string
-//
-//const (
-//	SiteTypeExact    SiteType = "exact"
-//	SiteTypeWildCard SiteType = "wildcard"
-//)
+type TargetSelectType string
+
+const (
+	TargetSelectTypeDefault   TargetSelectType = ""
+	TargetSelectTypePathIndex TargetSelectType = "path"
+)
 
 type Config struct {
 	Global      GlobalConfig              `mapstructure:"global,omitempty"`
@@ -31,7 +31,6 @@ type Config struct {
 }
 
 type GlobalConfig struct {
-	// Site *SiteConfig `mapstructure:"site,omitempty"` // Site is the default global site config
 	//Logging           LoggingConfig `mapstructure:"logging,omitempty"`
 	//DefaultProxychain string        `mapstructure:"default_proxychain,omitempty"`
 }
@@ -47,18 +46,19 @@ type ListenerConfig struct {
 }
 
 type SiteConfig struct {
-	Listener []string `mapstructure:"listener"` // Listener is the name of the listener to attach the site too
-	Host     string   `mapstructure:"host"`     // Host is the hostname to respond to
-	// SiteType   SiteType      `mapstructure:"site_type"`  // SiteType is the type of matching to do. Default is exact.
+	Listener   []string      `mapstructure:"listener"`   // Listener is the name of the listener to attach the site too
+	Host       string        `mapstructure:"host"`       // Host is the hostname to respond to
 	Backend    BackendConfig `mapstructure:"backend"`    // Backend is the backend for the server
 	Proxychain string        `mapstructure:"proxychain"` // Proxychain is the proxychain to use for connections
 	Method     string        `mapstructure:"method"`     // Method is the type of proxy to use. Options are "http-edge"
 }
 
 type BackendConfig struct {
-	Target      HostSpec                      `mapstructure:"target"`
-	TLS         TLS                           `mapstructure:"tls,omitempty"` // TLS configures TLS connectivity to the backend
-	HTTPHeaders `mapstructure:"http_headers"` // HTTPHeaders configures modifications to the HTTP headers
+	Target             HostSpec                      `mapstructure:"target"`
+	TLS                TLS                           `mapstructure:"tls,omitempty"`                  // TLS configures TLS connectivity to the backend
+	TargetSelect       TargetSelectType              `mapstructure:"target_select,omitempty"`        // TargetSelect specifies how a dynamic target should be selected
+	TargetSelectParams map[string]interface{}        `mapstructure:"target_select_params,omitempty"` // TargetSelectParams is the key-value parameters for the given target selector
+	HTTPHeaders        `mapstructure:"http_headers"` // HTTPHeaders configures modifications to the HTTP headers
 }
 
 type TLS struct {

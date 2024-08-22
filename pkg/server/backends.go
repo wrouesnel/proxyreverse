@@ -4,6 +4,7 @@ import (
 	"crypto/tls"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"net/url"
 
@@ -17,11 +18,12 @@ type HTTPBackend struct {
 	client     *req.Client // client is the HTTP request client used to forward connections
 	proxychain Proxychain  // proxychain is the chain of proxies which connect to the system
 
-	target     string
-	port       uint16
-	tls        config.TLS
-	setHeaders http.Header // setHeaders ore the headers to set on the outbound request
-	delHeaders []string    // delHeaders are the headers to delete on the outbound request
+	target         string
+	port           uint16
+	tls            config.TLS
+	setHeaders     http.Header    // setHeaders ore the headers to set on the outbound request
+	delHeaders     []string       // delHeaders are the headers to delete on the outbound request
+	targetSelector TargetSelector // targetSelector implements the actual target backend selection logic
 }
 
 func NewHTTPBackend(config config.BackendConfig, proxychain Proxychain) (*HTTPBackend, error) {
@@ -41,15 +43,21 @@ func NewHTTPBackend(config config.BackendConfig, proxychain Proxychain) (*HTTPBa
 		})
 	}
 
+	targetSelector := NewTargetSelector(config.TargetSelect, config.TargetSelectParams)
+	if targetSelector == nil {
+		return nil, fmt.Errorf("invalid target_select specification")
+	}
+
 	r := &HTTPBackend{
 		client:     client,
 		proxychain: proxychain,
 
-		target:     config.Target.Host,
-		port:       config.Target.Port,
-		tls:        config.TLS,
-		setHeaders: config.HTTPHeaders.SetHeaders,
-		delHeaders: config.HTTPHeaders.DelHeaders,
+		target:         config.Target.Host,
+		port:           config.Target.Port,
+		tls:            config.TLS,
+		setHeaders:     config.HTTPHeaders.SetHeaders,
+		delHeaders:     config.HTTPHeaders.DelHeaders,
+		targetSelector: targetSelector,
 	}
 	r.logger = zap.L().With(zap.String("target", config.Target.String()))
 
@@ -76,10 +84,9 @@ func (h HTTPBackend) ServeHTTP(writer http.ResponseWriter, request *http.Request
 		scheme = "https"
 	}
 
-	targetHost := request.Host
-	if h.target != "" {
-		targetHost = h.target
-	}
+	// Get the target name
+	target := h.targetSelector.GetTarget(h, request)
+	targetHost, _, _ := net.SplitHostPort(target)
 
 	if h.target == "" && h.tls.Enable {
 		// Need to set SNI name per request if no specified target
@@ -87,8 +94,6 @@ func (h HTTPBackend) ServeHTTP(writer http.ResponseWriter, request *http.Request
 		tlsConfig.ServerName = targetHost
 		h.client.SetTLSClientConfig(tlsConfig)
 	}
-
-	target := fmt.Sprintf("%s:%v", targetHost, h.port)
 
 	outboundURL := url.URL{
 		Scheme:      scheme,

@@ -1,4 +1,6 @@
 # Example configuration for fronting Onion sites via a local Tor SOCKS proxy.
+# Two configurations are included: directly providing *.onion support, and
+# path-proxying to provide fronting on localhost.
 
 proxychains:
   default:
@@ -16,4 +18,15 @@ sites:
    - http
    backend:
      target: ":80"
+   proxychain: default
+ - host: "localhost"
+   listener:
+     - http
+   backend:
+     target: ":80"
+     # use the path selector to use the first path name component to select
+     # the host path.
+     target_select: path
+     target_select_params:
+       index: 1
    proxychain: default
