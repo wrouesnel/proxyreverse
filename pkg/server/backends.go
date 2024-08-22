@@ -2,6 +2,7 @@ package server
 
 import (
 	"crypto/tls"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -17,6 +18,7 @@ type HTTPBackend struct {
 	proxychain Proxychain  // proxychain is the chain of proxies which connect to the system
 
 	target     string
+	port       uint16
 	tls        config.TLS
 	setHeaders http.Header // setHeaders ore the headers to set on the outbound request
 	delHeaders []string    // delHeaders are the headers to delete on the outbound request
@@ -43,7 +45,8 @@ func NewHTTPBackend(config config.BackendConfig, proxychain Proxychain) (*HTTPBa
 		client:     client,
 		proxychain: proxychain,
 
-		target:     config.Target.HostPort(),
+		target:     config.Target.Host,
+		port:       config.Target.Port,
 		tls:        config.TLS,
 		setHeaders: config.HTTPHeaders.SetHeaders,
 		delHeaders: config.HTTPHeaders.DelHeaders,
@@ -73,10 +76,24 @@ func (h HTTPBackend) ServeHTTP(writer http.ResponseWriter, request *http.Request
 		scheme = "https"
 	}
 
+	targetHost := request.Host
+	if h.target != "" {
+		targetHost = h.target
+	}
+
+	if h.target == "" && h.tls.Enable {
+		// Need to set SNI name per request if no specified target
+		tlsConfig := h.client.GetTLSClientConfig()
+		tlsConfig.ServerName = targetHost
+		h.client.SetTLSClientConfig(tlsConfig)
+	}
+
+	target := fmt.Sprintf("%s:%v", targetHost, h.port)
+
 	outboundURL := url.URL{
 		Scheme:      scheme,
 		User:        request.URL.User,
-		Host:        h.target,
+		Host:        target,
 		Path:        request.URL.Path,
 		RawQuery:    request.URL.RawQuery,
 		RawFragment: request.URL.RawFragment,

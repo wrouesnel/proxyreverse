@@ -1,0 +1,19 @@
+# Example configuration for fronting Onion sites via a local Tor SOCKS proxy.
+
+proxychains:
+  default:
+    - proxy: socks5://127.0.0.1:9050
+
+listeners:
+  http:
+    listen_addr: 127.0.0.1:8080
+    listen_type: http-edge
+
+# Match all *.onion incoming requests and simply forward them unchanged.
+sites:
+ - host: "*.onion"
+   listener:
+   - http
+   backend:
+     target: ":80"
+   proxychain: default

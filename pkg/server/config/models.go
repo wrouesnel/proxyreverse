@@ -16,6 +16,13 @@ const (
 	SiteConfigTypeHTTPEdge ListenerType = "http-edge"
 )
 
+//type SiteType string
+//
+//const (
+//	SiteTypeExact    SiteType = "exact"
+//	SiteTypeWildCard SiteType = "wildcard"
+//)
+
 type Config struct {
 	Global      GlobalConfig              `mapstructure:"global,omitempty"`
 	Proxychains map[string][]Proxy        `mapstructure:"proxychains,omitempty"`
@@ -24,6 +31,7 @@ type Config struct {
 }
 
 type GlobalConfig struct {
+	// Site *SiteConfig `mapstructure:"site,omitempty"` // Site is the default global site config
 	//Logging           LoggingConfig `mapstructure:"logging,omitempty"`
 	//DefaultProxychain string        `mapstructure:"default_proxychain,omitempty"`
 }
@@ -39,11 +47,12 @@ type ListenerConfig struct {
 }
 
 type SiteConfig struct {
-	Listener   []string      `mapstructure:"listener"`   // Listener is the name of the listener to attach the site too
-	Host       string        `mapstructure:"host"`       // Host is the hostname to respond to
+	Listener []string `mapstructure:"listener"` // Listener is the name of the listener to attach the site too
+	Host     string   `mapstructure:"host"`     // Host is the hostname to respond to
+	// SiteType   SiteType      `mapstructure:"site_type"`  // SiteType is the type of matching to do. Default is exact.
 	Backend    BackendConfig `mapstructure:"backend"`    // Backend is the backend for the server
 	Proxychain string        `mapstructure:"proxychain"` // Proxychain is the proxychain to use for connections
-	Method     string        `mapstructure:"method"`     // Method is the type of proxy to use. Options are "edge"
+	Method     string        `mapstructure:"method"`     // Method is the type of proxy to use. Options are "http-edge"
 }
 
 type BackendConfig struct {
@@ -113,6 +122,10 @@ func (u *HostSpec) String() string {
 }
 
 func (u *HostSpec) HostPort() string {
+	// Allow a blank host spec.
+	if u.Host == "" && u.Port == 0 {
+		return ""
+	}
 	return fmt.Sprintf("%v:%v", u.Host, u.Port)
 }
 
