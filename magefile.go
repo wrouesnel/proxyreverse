@@ -479,7 +479,7 @@ func Tools() (err error) {
 
 	// golangci-lint don't want to support if it's not a binary release, so
 	// don't go-install.
-	if berr := toolBuild("static", []string{"", "github.com/golangci/golangci-lint/cmd/golangci-lint@v1.48.0"},
+	if berr := toolBuild("static", []string{"", "github.com/golangci/golangci-lint/cmd/golangci-lint@v1.60.2"},
 		[]string{"gocovmerge", "github.com/wadey/gocovmerge@latest"}); berr != nil {
 		return berr
 	}
@@ -489,7 +489,7 @@ func Tools() (err error) {
 
 func lintArgs(args ...string) []string {
 	returnedArgs := []string{"-j", fmt.Sprintf("%v", concurrency), fmt.Sprintf(
-		"--deadline=%s", linterDeadline.String())}
+		"--timeout=%s", linterDeadline.String())}
 	returnedArgs = append(returnedArgs, args...)
 	return returnedArgs
 }
@@ -678,6 +678,7 @@ func Coverage() error {
 }
 
 // All runs a full suite suitable for CI
+//
 //nolint:unparam
 func All() error {
 	mg.SerialDeps(Style, Lint, Test, Coverage, Release)
@@ -685,6 +686,7 @@ func All() error {
 }
 
 // GithubReleaseMatrix emits a line to setup build matrix jobs for release builds.
+//
 //nolint:unparam
 func GithubReleaseMatrix() error {
 	output := make([]string, 0, len(platforms))
@@ -765,6 +767,7 @@ func Binary() error {
 }
 
 // doReleaseBin handles the deferred building of an actual release binary.
+//
 //nolint:gocritic
 func doReleaseBin(OSArch string) func() error {
 	platform, ok := platformsLookup[OSArch]
@@ -782,6 +785,7 @@ func doReleaseBin(OSArch string) func() error {
 }
 
 // ReleaseBin builds cross-platform release binaries under the bin/ directory.
+//
 //nolint:gocritic
 func ReleaseBin(OSArch string) error {
 	return doReleaseBin(OSArch)()
@@ -798,6 +802,7 @@ func ReleaseBinAll() error {
 }
 
 // Release builds release archives under the release/ directory.
+//
 //nolint:gocritic
 func doRelease(OSArch string) func() error {
 	platform, ok := platformsLookup[OSArch]
@@ -853,6 +858,7 @@ func PlatformTargets() error {
 }
 
 // Release a binary archive for a specific platform
+//
 //nolint:gocritic
 func Release(OSArch string) error {
 	return doRelease(OSArch)()
@@ -885,6 +891,7 @@ func Clean() error {
 }
 
 // Debug prints the value of internal state variables
+//
 //nolint:unparam
 func Debug() error {
 	fmt.Println("Source Files:", goSrc)

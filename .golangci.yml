@@ -9,12 +9,7 @@ linters:
   enable-all: true
   disable:
     # Deprecated
-    - golint
     - ireturn
-    - interfacer
-    - exhaustivestruct
-    - maligned
-    - scopelint
     # Doesn't work
     - promlinter
     # Not used
@@ -37,8 +32,9 @@ linters:
 #    - unused
     - godox # noisy and counterproductive
     # Deprecated
-    - nosnakecase # deprecated
-    - ifshort # deprecated
+    - exportloopref
+    - gomnd
+    - execinquery
 
 issues:
   exclude-rules:
