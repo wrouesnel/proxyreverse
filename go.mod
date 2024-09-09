@@ -8,7 +8,7 @@ require (
 	github.com/MadAppGang/httplog v1.3.0
 	github.com/MadAppGang/httplog/zap v1.2.1
 	github.com/alecthomas/kong v0.9.0
-	github.com/imroc/req/v3 v3.43.7
+	github.com/imroc/req/v3 v3.44.0
 	github.com/integralist/go-findroot v0.0.0-20160518114804-ac90681525dc
 	github.com/magefile/mage v1.15.0
 	github.com/mholt/archiver v3.1.1+incompatible
