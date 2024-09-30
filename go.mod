@@ -14,7 +14,7 @@ require (
 	github.com/mholt/archiver v3.1.1+incompatible
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/pkg/errors v0.9.1
-	github.com/rogpeppe/go-internal v1.12.0
+	github.com/rogpeppe/go-internal v1.13.1
 	github.com/samber/lo v1.47.0
 	github.com/wrouesnel/go.connect-proxy-scheme v0.0.0-20220926121750-2b62bcbfc923
 	go.uber.org/zap v1.27.0
